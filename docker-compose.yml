@@ -1,0 +1,51 @@
+# ============================================================
+# 群晖 DSM「Container Manager」— FlexNet lmgrd（Wine）
+#
+# 目录：
+#   bin/         → lmgrd.exe + 各厂商 daemon（*.exe）+ dll
+#   licenses/    → *.lic
+#   logs/        → 每次启动按时间戳生成的 lmgrd 日志（可写）
+#
+# 日志文件名示例（时区 Asia/Shanghai）：
+#   logs/lmgrd-20261115-104700.log
+#
+# 实际命令：
+#   wine lmgrd.exe -z -c /app/run/license.lic -l /app/logs/lmgrd-时间.log
+# ============================================================
+
+services:
+  wine-flexnet:
+    build: .
+    image: wine-flexnet:synology
+    container_name: wine-flexnet
+    restart: unless-stopped
+    user: "0:0"
+
+    environment:
+      LICENSE_FILE: "license.lic"
+      # auto = 每次启动按时间生成；也可写成固定名如 lmgrd.log
+      LOG_FILE: "auto"
+      LOG_DIR: "/app/logs"
+      EXTRA_ARGS: ""
+      USE_XVFB: "1"
+      WINEDEBUG: "-all"
+      TZ: "Asia/Shanghai"
+
+    volumes:
+      - ./bin:/app/bin:ro
+      - ./licenses:/app/licenses:ro
+      # 日志目录需可写，不要加 :ro
+      - ./logs:/app/logs
+      - wine-prefix:/wine/prefix
+
+    ports:
+      - "25734:25734/tcp"
+      - "25735:25735/tcp"
+
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    # privileged: true
+
+volumes:
+  wine-prefix:

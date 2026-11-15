@@ -1,0 +1,10 @@
+SERVER this_host ANY 25734
+VENDOR FF_D PORT=25735
+USE_SERVER
+#
+# 复制本文件为 license.lic，再换成你的真实 INCREMENT / SIGN。
+# 打包分发时不要包含 license.lic。
+#
+INCREMENT app FF_D 30.0 permanent 1000 \
+	VENDOR_STRING="sn=YOUR_SERIAL sd=MM-DD-YYYY" \
+	TS_OK ISSUER="YOUR_ORG" SIGN="YOUR_SIGN_HERE"
